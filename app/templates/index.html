@@ -1,0 +1,97 @@
+<!-- templates/index.html -->
+
+{% extends 'layout.html' %} {% block content %}
+
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    {% include 'partials/home_side_panel.html' %}
+    <div
+      class="col-md-9 d-flex flex-column align-items-center justify-content-center"
+    >
+      {% if current_user.is_authenticated %}
+      <div class="text-center mb-4">
+        <h2>Welcome back</h2>
+        <h2>{{ current_user.username }}</h2>
+      </div>
+      <div class="text-center">
+        <button
+          onclick="window.location.href='{{ url_for('recipes.recipes_list') }}'"
+          class="btn btn-primary mb-2"
+        >
+          Go to App
+        </button>
+        <button
+          onclick="window.location.href='{{ url_for('user.log_out') }}'"
+          class="btn btn-primary"
+        >
+          Log out
+        </button>
+      </div>
+      {% else %}
+      <div class="w-50">
+        <form
+          action="{{ url_for('user.log_in') }}"
+          method="POST"
+          class="needs-validation"
+          novalidate
+        >
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input
+              name="username"
+              type="text"
+              class="form-control"
+              id="username"
+              placeholder="username"
+              required
+            />
+            <div class="invalid-feedback">Please enter your username.</div>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              name="password"
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="password"
+              required
+            />
+            <div class="invalid-feedback">Please enter your password.</div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Log In</button>
+        </form>
+        <button
+          onclick="window.location.href='{{ url_for('user.sign_up') }}'"
+          class="btn btn-secondary w-100 mt-3"
+        >
+          Sign up
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap validation script
+  (function () {
+    "use strict";
+    var forms = document.querySelectorAll(".needs-validation");
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
+
+{% endblock %}
