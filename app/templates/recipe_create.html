@@ -91,17 +91,24 @@
         value="{{ recipe_data.cook_time }}"
       />
     </div>
-    <div class="form-group">
-      <label for="ingredients">Ingredients:</label>
-      <textarea
-        class="form-control"
-        id="ingredients"
-        name="ingredients"
-        rows="5"
+
+    <div id="ingredient-sections">
+      <h3>Ingredients Sections</h3>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        hx-post="{{ url_for('recipes.add_section') }}"
+        hx-trigger="click"
+        hx-target="#ingredient-sections"
+        hx-include="#section-index"
+        hx-swap="beforeend"
       >
-{{ recipe_data.ingredients }}</textarea
-      >
+        Add Section
+      </button>
+      <input type="hidden" id="section-index" name="section_index" value="0" />
+      <!-- This is where the sections will be dynamically added -->
     </div>
+
     <div class="form-group">
       <label for="instructions">Method:</label>
       <textarea

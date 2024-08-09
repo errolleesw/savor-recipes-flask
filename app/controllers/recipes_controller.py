@@ -20,7 +20,7 @@ def recipes_list():
 @login_required
 def create_recipe():
     if request.method == 'POST':
-        # handle form submission
+        # Create the main recipe object
         new_recipe = Recipe(
             # id=request.form['name'],
             name=request.form['name'],
@@ -42,8 +42,43 @@ def create_recipe():
             created_by=current_user.id
         )
         db.session.add(new_recipe)
+        db.session.flush()  # Get the ID of the newly created recipe
+
+        # Process each ingredient section
+        section_index = 0
+        while f'section_name_{section_index}' in request.form:
+            section_name = request.form[f'section_name_{section_index}']
+            new_section = IngredientsSection(
+                recipe_id=new_recipe.id,
+                name=section_name,
+                c_order=section_index + 1,
+                created_by=current_user.id
+            )
+            db.session.add(new_section)
+            db.session.flush()
+
+            # Process each ingredient in the section
+            ingredient_index = 0
+            while f'ingredient_name_{section_index}_{ingredient_index}' in request.form:
+                ingredient_name = request.form[f'ingredient_name_{section_index}_{ingredient_index}']
+                quantity = request.form[f'ingredient_quantity_{section_index}_{ingredient_index}']
+                unit = request.form[f'ingredient_unit_{section_index}_{ingredient_index}']
+
+                new_ingredient = Ingredients(
+                    section_id=new_section.id,
+                    name=ingredient_name,
+                    quantity=quantity,
+                    unit=unit,
+                    created_by=current_user.id
+                )
+                db.session.add(new_ingredient)
+                # ingredient_index += 1
+
+            # section_index += 1
+
         db.session.commit()
         return redirect(url_for('recipes.recipes_list'))
+
     return render_template('recipe_create.html', title='Create a Recipe', recipe_data={})
 
 @recipes_bp.route('/fetch', methods=['POST'])
@@ -84,3 +119,18 @@ def delete_recipe(recipe_id):
     db.session.delete(recipe)
     db.session.commit()
     return redirect(url_for('recipes.recipes_list'))
+
+from flask import render_template, request, jsonify
+
+@recipes_bp.route('/add_section', methods=['POST'])
+@login_required
+def add_section():
+    section_index = request.form.get('section_index', 0, type=int)
+    return render_template('partials/_ingredient_section.html', section_index=section_index)
+
+@recipes_bp.route('/add_ingredient', methods=['POST'])
+@login_required
+def add_ingredient():
+    section_index = request.form.get('section_index', 0, type=int)
+    ingredient_index = request.form.get('ingredient_index', 0, type=int)
+    return render_template('partials/_ingredient.html', section_index=section_index, ingredient_index=ingredient_index)

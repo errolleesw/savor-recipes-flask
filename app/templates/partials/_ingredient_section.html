@@ -1,0 +1,40 @@
+<div class="ingredient-section" id="ingredient-section-{{ section_index }}">
+  <h4>Section {{ section_index + 1 }}</h4>
+  <div class="form-group">
+    <label for="section_name_{{ section_index }}">Section Name:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="section_name_{{ section_index }}"
+      name="section_name_{{ section_index }}"
+      required
+    />
+  </div>
+  <div class="ingredients">
+    <h5>Ingredients</h5>
+    <div id="ingredient-list-{{ section_index }}"></div>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      hx-post="{{ url_for('recipes.add_ingredient') }}"
+      hx-trigger="click"
+      hx-include="#section-index, #ingredient-index-{{ section_index }}"
+      hx-target="#ingredient-list-{{ section_index }}"
+      hx-swap="beforeend"
+    >
+      Add Ingredient
+    </button>
+    <input
+      type="hidden"
+      id="ingredient-index-{{ section_index }}"
+      name="ingredient_index"
+      value="0"
+    />
+  </div>
+</div>
+<input
+  type="hidden"
+  name="section_index"
+  id="section-index"
+  value="{{ section_index + 1 }}"
+/>
