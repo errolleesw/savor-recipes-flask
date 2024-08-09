@@ -1,15 +1,19 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+# app/controllers/recipes_controller.py
+
+from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_required, current_user
-from app.models import Recipe
+from app.models import Recipe, IngredientsSection, Ingredients, IngredientsMaster, InstructionSection, InstructionStep
 from app import db
 from app.data.links import links
+from app.utils.fetch_recipe_data import fetch_recipe_data
+
 
 recipes_bp = Blueprint('recipes', __name__)
 
 @recipes_bp.route('/')
 @login_required
 def recipes_list():
-    recipes = Recipe.query.filter_by(user_id=current_user.id).all()
+    recipes = Recipe.query.filter_by(created_by=current_user.id).all()
     return render_template('recipes.html', title='Recipes List', recipes=recipes, links=links)
 
 @recipes_bp.route('/create', methods=['GET', 'POST'])
@@ -18,18 +22,38 @@ def create_recipe():
     if request.method == 'POST':
         # handle form submission
         new_recipe = Recipe(
+            # id=request.form['name'],
             name=request.form['name'],
-            servings=request.form['servings'],
-            prep_time=request.form['prep_time'],
+            # recipe_image=request.form['image'],
+            description=request.form['description'],
+            keywords=request.form['keywords'],
+            # author=request.form['author'],
+            c_notes=request.form['notes'],
+            prep_time=request.form['prep_time'], # TODO: Need to convert to ISO 8601 duration
             cook_time=request.form['cook_time'],
-            ingredients=request.form['ingredients'],
-            method=request.form['method'],
-            user_id=current_user.id
+            # total_time= prep_time + cook_time, TODO: Need to calculate and convert to ISO 8601 duration
+            recipe_yield=request.form['recipe_yield'],
+            # recipe_cuisine=request.form['recipe_cuisine'], # TODO: Need to convert to recipe_cuisine and convert to JSON array
+            # suitable_for_diet=request.form['suitable_for_diet'], # TODO: Need to convert to JSON array. This should be a multi-select.
+            source=request.form['source'],
+            recipe_ingredients_raw=request.form['ingredients'],
+            recipe_instructions_raw=request.form['instructions'], 
+            # nutrition=request.form['nutrition'], TODO: Need to create input and convert to JSON object.
+            created_by=current_user.id
         )
         db.session.add(new_recipe)
         db.session.commit()
         return redirect(url_for('recipes.recipes_list'))
-    return render_template('recipe_create.html', title='Create a Recipe')
+    return render_template('recipe_create.html', title='Create a Recipe', recipe_data={})
+
+@recipes_bp.route('/fetch', methods=['POST'])
+def fetch_recipe():
+    url = request.form.get('url')
+    data = fetch_recipe_data(url)
+    if data:
+        return render_template('recipe_create.html', title='Create Recipe', recipe_data=data)
+    else:
+        return render_template('recipe_create.html', title='Create Recipe', error="No structured data found.")
 
 @recipes_bp.route('/<int:recipe_id>')
 @login_required

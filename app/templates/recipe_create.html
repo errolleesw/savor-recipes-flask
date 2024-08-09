@@ -1,14 +1,34 @@
-<!-- templates/recipe_create.html -->
+<!-- app/templates/recipe_create.html -->
 
 {% extends 'layout.html' %} {% block content %} {% include
 'partials/nav_bar.html' with context %}
 
 <div class="container mt-5 pt-4">
   <h1>{{ title }}</h1>
-  <form action="/recipes/create" method="POST" enctype="multipart/form-data">
+  <form id="fetch-recipe-form" action="/recipes/fetch" method="POST">
+    <div class="form-group">
+      <label for="url">Recipe URL:</label>
+      <input type="url" class="form-control" id="url" name="url" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Fetch Recipe Data</button>
+  </form>
+
+  <form
+    id="create-recipe-form"
+    action="/recipes/create"
+    method="POST"
+    enctype="multipart/form-data"
+  >
     <div class="form-group">
       <label for="name">Name:</label>
-      <input type="text" class="form-control" id="name" name="name" required />
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        value="{{ recipe_data.name }}"
+        required
+      />
     </div>
     <div class="form-group">
       <label for="description">Description:</label>
@@ -17,19 +37,39 @@
         id="description"
         name="description"
         rows="3"
-      ></textarea>
+      >
+{{ recipe_data.description }}</textarea
+      >
     </div>
     <div class="form-group">
-      <label for="category">Category:</label>
-      <input type="text" class="form-control" id="category" name="category" />
+      <label for="recipe_cuisine">Recipe Cuisine:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="recipe_cuisine"
+        name="recipe_cuisine"
+        value="{{ recipe_data.recipe_cuisine }}"
+      />
     </div>
     <div class="form-group">
-      <label for="tag">Tag:</label>
-      <input type="text" class="form-control" id="tag" name="tag" />
+      <label for="keywords">Keywords:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="keywords"
+        name="keywords"
+        value="{{ recipe_data.keywords }}"
+      />
     </div>
     <div class="form-group">
-      <label for="servings">Servings:</label>
-      <input type="number" class="form-control" id="servings" name="servings" />
+      <label for="recipe_yield">Servings:</label>
+      <input
+        type="number"
+        class="form-control"
+        id="recipe_yield"
+        name="recipe_yield"
+        value="{{ recipe_data.recipe_yield }}"
+      />
     </div>
     <div class="form-group">
       <label for="prep_time">Prep Time (minutes):</label>
@@ -38,6 +78,7 @@
         class="form-control"
         id="prep_time"
         name="prep_time"
+        value="{{ recipe_data.prep_time }}"
       />
     </div>
     <div class="form-group">
@@ -47,6 +88,7 @@
         class="form-control"
         id="cook_time"
         name="cook_time"
+        value="{{ recipe_data.cook_time }}"
       />
     </div>
     <div class="form-group">
@@ -56,25 +98,26 @@
         id="ingredients"
         name="ingredients"
         rows="5"
-      ></textarea>
+      >
+{{ recipe_data.ingredients }}</textarea
+      >
     </div>
     <div class="form-group">
-      <label for="method">Method:</label>
+      <label for="instructions">Method:</label>
       <textarea
         class="form-control"
-        id="method"
-        name="method"
+        id="instructions"
+        name="instructions"
         rows="5"
-      ></textarea>
+      >
+{{ recipe_data.instructions }}</textarea
+      >
     </div>
     <div class="form-group">
       <label for="notes">Notes:</label>
-      <textarea
-        class="form-control"
-        id="notes"
-        name="notes"
-        rows="3"
-      ></textarea>
+      <textarea class="form-control" id="notes" name="notes" rows="3">
+{{ recipe_data.notes }}</textarea
+      >
     </div>
     <div class="form-group">
       <label for="image">Image:</label>
@@ -82,11 +125,19 @@
     </div>
     <div class="form-group">
       <label for="source">Source:</label>
-      <input type="url" class="form-control" id="source" name="source" />
+      <input
+        type="url"
+        class="form-control"
+        id="source"
+        name="source"
+        value="{{ recipe_data.source }}"
+      />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
     <a href="/recipes" class="btn btn-secondary">Back to all recipes</a>
   </form>
 </div>
 
-{% endblock %}
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %} {% endblock %}

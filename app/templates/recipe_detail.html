@@ -25,11 +25,11 @@
             <strong>Description:</strong> {{ recipe.description }}
           </p>
           <p class="card-text">
-            <strong>Category:</strong> {{ recipe.category }}
+            <strong>Category:</strong> {{ recipe.recipe_cuisine }}
           </p>
-          <p class="card-text"><strong>Tags:</strong> {{ recipe.tag }}</p>
+          <p class="card-text"><strong>Tags:</strong> {{ recipe.keywords }}</p>
           <p class="card-text">
-            <strong>Servings:</strong> {{ recipe.servings }}
+            <strong>Servings:</strong> {{ recipe.recipe_yield }}
           </p>
           <p class="card-text">
             <strong>Prep Time:</strong> {{ recipe.prep_time }} minutes
@@ -44,9 +44,9 @@
             >
           </p>
           <h2 class="card-title">Ingredients</h2>
-          <p class="card-text">{{ ingredients_html | safe }}</p>
+          <p class="card-text">{{recipe.recipe_ingredients_raw}}</p>
           <h2 class="card-title">Method</h2>
-          <p class="card-text">{{ method_html | safe }}</p>
+          <p class="card-text">{{recipe.recipe_instructions_raw}}</p>
           <h2 class="card-title">Notes</h2>
           <p class="card-text">{{ recipe.notes }}</p>
           <a
