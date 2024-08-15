@@ -4,3 +4,7 @@ Flask-Migrate
 Flask-Login
 Flask-Bcrypt
 python-dotenv
+langchain_core
+langchain_openai
+dotenv
+markdown

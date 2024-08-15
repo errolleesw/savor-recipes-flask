@@ -1,0 +1,149 @@
+{
+  "title": "IngredientInstructions",
+  "description": "A schema that defines the json structure to for recipe ingredients.",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Provide the name of the recipe."
+    },
+    "c_supply": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "HowToSection"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the ingredient category."
+          },
+          "c_order": {
+            "type": "integer",
+            "description": "The order the category will appear."
+          },
+          "itemListElement": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "@type": {
+                  "type": "string",
+                  "const": "HowToSupply"
+                },
+                "c_order": {
+                  "type": "integer",
+                  "description": "The order the ingredient will appear in the section."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the supply"
+                },
+                "quantity": {
+                  "type": "string",
+                  "description": "Quantity of the supply"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Unit of measure for the quantity",
+                  "enum": [
+                    "tablespoon",
+                    "count",
+                    "teaspoon",
+                    "cup",
+                    "milliliter",
+                    "liter",
+                    "fluid ounce",
+                    "pint",
+                    "quart",
+                    "gallon",
+                    "milligram",
+                    "gram",
+                    "kilogram",
+                    "ounce",
+                    "pound",
+                    "inch",
+                    "centimeter",
+                    "slice",
+                    "pinch",
+                    "dash",
+                    "clove",
+                    "can",
+                    "package",
+                    "jar",
+                    "bunch",
+                    "sprig"
+                  ]
+                },
+                "ingredient": {
+                  "type": "string",
+                  "description": "Ingredient name"
+                }
+              },
+              "required": [
+                "@type",
+                "name",
+                "quantity",
+                "unit",
+                "ingredient",
+                "c_order"
+              ]
+            }
+          }
+        },
+        "required": ["@type", "name", "itemListElement", "c_order"]
+      }
+    },
+    "recipeInstructions": {
+      "type": "array",
+      "description": "List the steps to prepare the recipe. For each step, provide the raw text, sequence, and a concise instruction.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "@type": {
+            "type": "string",
+            "const": "HowToSection"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the instruction section"
+          },
+          "c_order": {
+            "type": "integer",
+            "description": "The order the section will appear."
+          },
+          "itemListElement": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "@type": {
+                  "type": "string",
+                  "const": "HowToStep"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "This is the instruction detail, make it concise but do not leave out any important details. Include the name & quantity of the ingredient required, key action, duration and any equipment required."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Summarise the instruction detail. This should be a very concise summary of the instruction detail in several words."
+                },
+                "c_order": {
+                  "type": "integer",
+                  "description": "The order the instructions will appear in the section."
+                }
+              },
+              "required": ["@type", "text", "name", "c_order"]
+            }
+          }
+        },
+        "required": ["@type", "name", "itemListElement", "c_order"]
+      }
+    }
+  },
+  "required": ["name", "c_supply", "recipeInstructions"]
+}

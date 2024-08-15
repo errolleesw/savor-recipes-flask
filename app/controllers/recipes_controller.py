@@ -1,11 +1,14 @@
 # app/controllers/recipes_controller.py
-
+import json
+import re
+import urllib.parse
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_required, current_user
 from app.models import Recipe, IngredientsSection, Ingredients, IngredientsMaster, InstructionSection, InstructionStep
 from app import db
 from app.data.links import links
 from app.utils.fetch_recipe_data import fetch_recipe_data
+from app.utils.process_recipe import process_recipe_content, processed_recipe_to_markdown
 
 
 recipes_bp = Blueprint('recipes', __name__)
@@ -82,6 +85,7 @@ def create_recipe():
     return render_template('recipe_create.html', title='Create a Recipe', recipe_data={})
 
 @recipes_bp.route('/fetch', methods=['POST'])
+@login_required
 def fetch_recipe():
     url = request.form.get('url')
     data = fetch_recipe_data(url)
@@ -89,6 +93,36 @@ def fetch_recipe():
         return render_template('recipe_create.html', title='Create Recipe', recipe_data=data)
     else:
         return render_template('recipe_create.html', title='Create Recipe', error="No structured data found.")
+
+@recipes_bp.route('/process-recipe', methods=['POST'])
+# @login_required()
+def process_recipe():
+    processed_recipe_data = {}
+    
+    # Extract the recipe content from the request
+    processed_recipe_data['name'] = request.form.get('name')
+    processed_recipe_data['description'] = request.form.get('description')
+    processed_recipe_data['recipe_cuisine'] = request.form.get('recipe_cuisine')
+    processed_recipe_data['keywords'] = request.form.get('keywords')
+    processed_recipe_data['recipe_yield'] = request.form.get('recipe_yield')
+    processed_recipe_data['prep_time'] = request.form.get('prep_time')
+    processed_recipe_data['cook_time'] = request.form.get('cook_time')
+    processed_recipe_data['notes'] = request.form.get('notes')
+    processed_recipe_data['source'] = request.form.get('source')
+
+    ingredients = request.form.get('ingredients')
+    instructions = request.form.get('instructions')
+
+    # print(recipe_name)
+    # print(recipe_description)
+                                    
+    # # Assuming you have a function `process_recipe_content` that processes the recipe data
+    schema_file_path = './app/data/schema/ingredients_instructions_schema_v1.json'
+    processed_recipe = process_recipe_content(processed_recipe_data['name'], ingredients, instructions, schema_file_path)
+    processed_recipe_data['recipeIngredients'], processed_recipe_data['recipeInstructions'] = processed_recipe_to_markdown(processed_recipe)
+
+    # # Return the processed recipe as JSON
+    return render_template('recipe_create.html', title='Create Recipe', recipe_data=processed_recipe_data)
 
 @recipes_bp.route('/<int:recipe_id>')
 @login_required

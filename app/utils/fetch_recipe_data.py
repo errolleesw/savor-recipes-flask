@@ -29,7 +29,7 @@ def fetch_recipe_data(url):
                 recipe_data['recipeYield'] = recipe.get('recipeYield', [''])[0]
                 recipe_data['prepTime'] = recipe.get('prepTime')
                 recipe_data['cookTime'] = recipe.get('cookTime')
-                recipe_data['recipeIngredient'] = '\n'.join(recipe.get('recipeIngredient', []))
+                recipe_data['recipeIngredients'] = '\n'.join(recipe.get('recipeIngredient', []))
                 recipe_data['recipeInstructions'] = '\n'.join(step['text'] for step in recipe.get('recipeInstructions', []))
                 recipe_data['source'] = recipe.get('mainEntityOfPage')
 

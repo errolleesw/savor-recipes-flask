@@ -100,25 +100,8 @@
         name="ingredients"
         rows="5"
       >
-{{ recipe_data.ingredients }}</textarea
+{{ recipe_data.recipeIngredients }}</textarea
       >
-    </div>
-
-    <div id="ingredient-sections">
-      <h3>Ingredients Sections</h3>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        hx-post="{{ url_for('recipes.add_section') }}"
-        hx-trigger="click"
-        hx-target="#ingredient-sections"
-        hx-include="#section-index"
-        hx-swap="beforeend"
-      >
-        Add Section
-      </button>
-      <input type="hidden" id="section-index" name="section_index" value="0" />
-      <!-- This is where the sections will be dynamically added -->
     </div>
 
     <div class="form-group">
@@ -129,13 +112,13 @@
         name="instructions"
         rows="5"
       >
-{{ recipe_data.instructions }}</textarea
+{{ recipe_data.recipeInstructions }}</textarea
       >
     </div>
     <div class="form-group">
       <label for="notes">Notes:</label>
       <textarea class="form-control" id="notes" name="notes" rows="3">
-{{ recipe_data.notes }}</textarea
+      {{ recipe_data.notes }}</textarea
       >
     </div>
     <div class="form-group">
@@ -152,9 +135,22 @@
         value="{{ recipe_data.source }}"
       />
     </div>
+    <input type="hidden" name="recipe_data" value="{{ recipe_data }}" />
+
     <button type="submit" class="btn btn-primary">Submit</button>
     <a href="/recipes" class="btn btn-secondary">Back to all recipes</a>
   </form>
+
+  <!-- Form to process the recipe data with the LLM using HTMX -->
+  <button
+    class="btn btn-warning mt-3"
+    hx-post="/recipes/process-recipe"
+    hx-include="#create-recipe-form"
+    hx-target="body"
+    hx-swap="outerHTML"
+  >
+    Process Recipe Data
+  </button>
 </div>
 
 {% if error %}
